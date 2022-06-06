@@ -90,10 +90,17 @@ public class MockitoCore {
                             + "'\n"
                             + "At the moment, you cannot provide your own implementations of that class.");
         }
-        MockSettingsImpl impl = (MockSettingsImpl) settings;
+        MockSettingsImpl impl = (MockSettingsImpl) settings;//Mockito.mock的时候会创建一个 MockSettingsImpl
+        /**
+         * 根据 被mock的class 构建MockCreationSettings
+         */
         MockCreationSettings<T> creationSettings = impl.build(typeToMock);
         checkDoNotMockAnnotation(creationSettings.getTypeToMock(), creationSettings);
         T mock = createMock(creationSettings);
+        /**
+         * mockingProgress 将会通过ThreadLocal 返回当前线程的MockingProgressImpl对象，
+         * 如果没有这个对象则创建一个
+         */
         mockingProgress().mockingStarted(mock, creationSettings);
         return mock;
     }
@@ -169,14 +176,43 @@ public class MockitoCore {
     }
 
     public <T> OngoingStubbing<T> when(T methodCall) {
+        /**
+         *
+         * 这个mockingProgress是个什么东西？OngoingStubbing又是什么呢？想要弄清楚来龙去脉，
+         * 还记得刚才一直强调的MockHandlerImpl吗？上文说过，mock对象所有的方法最终都会交由MockHandlerImpl的handle方法处理，
+         * 所以这注定是一个不一样的女子，不，方法：
+         *
+         *  // 1.初始化MockProgressImpl对象
+         */
         MockingProgress mockingProgress = mockingProgress();
+        //        // 2.标记stub开始
         mockingProgress.stubbingStarted();
+        /**
+         * 再回过头来看MOCKITO_CORE 里的when方法就会清晰许多，它会取出刚刚存放在mockingProgress中的ongoingStubbing对象。
+         *
+         * 而我们熟知的thenReturn、thenThrow则是OngoingStubbing里的方法，这些方法最终都会调到如下方法: OngoingStubbing的thenAnswer
+         *
+         * answer即是对thenReturn、thenThrow之类的包装，当然我们也可以自己定义answer。我们有看到了刚刚说过的老朋友invocationContainerImpl，
+         * 它会帮我们保管这个answer，待以后调用该方法时返回正确的值，与之对应的代码是handle方法中如下这句代码：
+         *StubbedInvocationMatcher stubbedInvocation = invocationContainerImpl.findAnswerFor(invocation);
+         *当stubbedInvocation不为空时，就会调用anwser方法来回去之前设定的值：
+         *stubbedInvocation.answer(invocation)
+         * 如此，对于when(mock.doSome()).thenReturn(obj)这样的用法的主要逻辑了。
+         *
+         *
+         *3.获取最新的ongoingStubbing对象
+         *
+         * 其中OngoingStubbing对象会在每次MockHandlerImpl调用handle方法时创建一个，
+         * 然后set到ThreadLocal的mockingProgress中，所以这里取出来的就是上一次的调用，这
+         * 里也证明了其实when的参数是没用的，只要mock对象有方法调用就可以了。因此，when方法就是返回上次mock方法调用封装好的OngoingStubbing。
+         */
         @SuppressWarnings("unchecked")
-        OngoingStubbing<T> stubbing = (OngoingStubbing<T>) mockingProgress.pullOngoingStubbing();
+            OngoingStubbing<T> stubbing = (OngoingStubbing<T>) mockingProgress.pullOngoingStubbing();
         if (stubbing == null) {
             mockingProgress.reset();
             throw missingMethodInvocation();
         }
+        // 4.返回ongoingStubbing对象
         return stubbing;
     }
 

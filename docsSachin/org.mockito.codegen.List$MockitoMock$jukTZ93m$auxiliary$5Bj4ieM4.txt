@@ -1,0 +1,38 @@
+
+ClassLoader:                                                                    
++-sun.misc.Launcher$AppClassLoader@18b4aac2                                     
+  +-sun.misc.Launcher$ExtClassLoader@6767c1fc                                   
+
+Location:                                                                       
+/Users/jingrzhang/sourceCodes/mockito/build/classes/java/main/                  
+
+/*
+ * Decompiled with CFR.
+ */
+package org.mockito.codegen;
+
+import java.io.Serializable;
+import java.util.concurrent.Callable;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m;
+
+class List$MockitoMock$jukTZ93m$auxiliary$5Bj4ieM4
+implements Runnable,
+Callable,
+Serializable {
+    private List$MockitoMock$jukTZ93m argument0;
+
+    public Object call() throws Exception {
+        return this.argument0.spliterator$accessor$xiVxa7lf$uimou10();
+    }
+
+    @Override
+    public void run() {
+        this.argument0.spliterator$accessor$xiVxa7lf$uimou10();
+    }
+
+    List$MockitoMock$jukTZ93m$auxiliary$5Bj4ieM4(List$MockitoMock$jukTZ93m list$MockitoMock$jukTZ93m) {
+        this.argument0 = list$MockitoMock$jukTZ93m;
+    }
+}
+
+Affect(row-cnt:1) cost in 90 ms.

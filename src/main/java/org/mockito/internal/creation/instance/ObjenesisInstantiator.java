@@ -19,6 +19,10 @@ class ObjenesisInstantiator implements Instantiator {
 
     @Override
     public <T> T newInstance(Class<T> cls) {
+        /**
+         * 这里调用了objenesis.newInstance，那这个objenesis是何许人也呢？
+         * 这又是一个相当牛逼的框架，可以根据不同的平台选择不同的方法来new对象。总之一句话，你只要输入一个class进去，它就会输出其一个实例对象。感兴趣的可以查看其Github:https://github.com/easymock/objenesis。
+         */
         return objenesis.newInstance(cls);
     }
 }

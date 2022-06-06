@@ -40,12 +40,35 @@ public class SubclassByteBuddyMockMaker implements ClassCreatingMockMaker {
 
     @Override
     public <T> T createMock(MockCreationSettings<T> settings, MockHandler handler) {
+        /**
+         * 首先函数内的第一行代码就比较引人注目：createMockType，居然要创建一个代理类，必须追进去仔细瞧瞧，
+         * 我们直接跳到最终处理的地方:MockBytecodeGenerator类的 generateMockClass方法:
+         *
+         * SubclassByteBuddyMockMaker.createMockType方法
+         *
+         * 实际调用的是org.mockito.internal.creation.bytebuddy.SubclassBytecodeGenerator#mockClass，
+         * 之后进行拦截器的配置（mock创建的代理对象的方法调用，都会被这里设置的interpretor拦截器拦截，来执行thenReturn模拟的返回结果）等，
+         * 到这里就算完成了代理类替换真是类的主要过程。
+         *
+         */
         Class<? extends T> mockedProxyType = createMockType(settings);
+
+        /**
+         * 这个Instantiator也是一个接口，它有两个实现，一是ObjenesisInstantiator,另外一个是ConstructorInstantiator，默认情况下，
+         * 都是在使用 ObjenesisInstantiator
+         */
 
         Instantiator instantiator = Plugins.getInstantiatorProvider().getInstantiator(settings);
         T mockInstance = null;
         try {
             mockInstance = instantiator.newInstance(mockedProxyType);
+
+            /**
+             * 注意这里将 mockInstance 转换为 MockAccess
+             *
+             *将MockMethodInterceptor 设置到mockAccess
+             * 这个interceptor里的handler就是我们之前所说的InvocationNotifierHandler。
+             */
             MockAccess mockAccess = (MockAccess) mockInstance;
             mockAccess.setMockitoInterceptor(new MockMethodInterceptor(handler, settings));
 
@@ -74,6 +97,11 @@ public class SubclassByteBuddyMockMaker implements ClassCreatingMockMaker {
     @Override
     public <T> Class<? extends T> createMockType(MockCreationSettings<T> settings) {
         try {
+            /**
+             * cahingMockByteCodeGenerator是 TypeCachingBytecodeGenerator
+             *
+             * 首先使用MockFeatures封装一些 mock信息
+             */
             return cachingMockBytecodeGenerator.mockClass(
                     MockFeatures.withMockFeatures(
                             settings.getTypeToMock(),

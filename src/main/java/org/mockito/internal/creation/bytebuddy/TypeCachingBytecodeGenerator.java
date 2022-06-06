@@ -33,9 +33,24 @@ class TypeCachingBytecodeGenerator extends ReferenceQueue<ClassLoader>
     @SuppressWarnings("unchecked")
     @Override
     public <T> Class<T> mockClass(final MockFeatures<T> params) {
+        /**
+         * mockClass:37, TypeCachingBytecodeGenerator (org.mockito.internal.creation.bytebuddy)
+         * createMockType:77, SubclassByteBuddyMockMaker (org.mockito.internal.creation.bytebuddy)
+         * createMock:43, SubclassByteBuddyMockMaker (org.mockito.internal.creation.bytebuddy)
+         * createMock:29, ByteBuddyMockMaker (org.mockito.internal.creation.bytebuddy)
+         * createMock:53, MockUtil (org.mockito.internal.util)
+         * mock:62, MockitoCore (org.mockito.internal)
+         * mock:1951, Mockito (org.mockito)
+         * mock:1862, Mockito (org.mockito)
+         *
+         */
         lock.readLock().lock();
         try {
             ClassLoader classLoader = params.mockedType.getClassLoader();
+            /**
+             * 1. typeCache 是一个 TypeCache<MockitoMockKey> 类型的数据， 因此这里我门创建了一个MockitoMockKey
+             * 2。第三个参数是一个callable， 用来生成 mockClass
+             */
             return (Class<T>)
                     typeCache.findOrInsert(
                             classLoader,

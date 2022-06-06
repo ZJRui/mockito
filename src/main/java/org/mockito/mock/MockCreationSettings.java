@@ -43,6 +43,7 @@ public interface MockCreationSettings<T> {
 
     /**
      * the spied instance - needed for spies.
+     * 间谍实例 - 间谍所需
      */
     Object getSpiedInstance();
 
@@ -60,11 +61,14 @@ public interface MockCreationSettings<T> {
      * Whether the mock is only for stubbing, i.e. does not remember
      * parameters on its invocation and therefore cannot
      * be used for verification
+     *
+     * 模拟是否仅用于存根，即不记住其调用时的参数，因此不能用于验证
      */
     boolean isStubOnly();
 
     /**
      * Whether the mock should not make a best effort to preserve annotations.
+     * 模拟是否不应该尽最大努力保留注释。
      */
     boolean isStripAnnotations();
 
@@ -73,6 +77,9 @@ public interface MockCreationSettings<T> {
      * The resulting list is mutable, you can add/remove listeners even after the mock was created.
      * <p>
      * For more details see {@link StubbingLookupListener}.
+     *
+     * 通过MockSettings.stubbingLookupListeners(StubbingLookupListener…)返回StubbingLookupListener实例。产生的列表是可变的，
+     * 即使在创建了mock之后，您也可以添加/删除侦听器。更多细节请参见StubbingLookupListener。
      *
      * @since 2.24.6
      */
@@ -112,6 +119,8 @@ public interface MockCreationSettings<T> {
     /**
      * Used when mocking non-static inner classes in conjunction with {@link #isUsingConstructor()}
      *
+     *
+     * 在与isUsingConstructor()一起模拟非静态内部类时使用
      * @return the outer class instance used for creation of the mock object via the constructor.
      * @since 1.10.12
      */
@@ -123,10 +132,14 @@ public interface MockCreationSettings<T> {
      * Informs if the mock was created with "lenient" strictness, e.g. having {@link Strictness#LENIENT} characteristic.
      * For more information about using mocks with lenient strictness, see {@link MockSettings#lenient()}.
      *
+     *
+     * 使用getStrictness()。如果模拟是用“宽松”的严格创建的，例如有严格。
+     * 宽松的特点。有关使用严格宽松的模拟的更多信息，请参阅MockSettings.lenient()。
+     *
      * @since 2.20.0
      */
     @Deprecated
-    boolean isLenient();
+    boolean isLenient();//是宽容的
 
     /**
      * Sets strictness level for the mock, e.g. having {@link Strictness#STRICT_STUBS} characteristic.

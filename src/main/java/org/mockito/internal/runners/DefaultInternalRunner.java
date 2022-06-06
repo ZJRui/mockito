@@ -47,6 +47,12 @@ public class DefaultInternalRunner implements InternalRunner {
                                     mockitoTestListener = listenerSupplier.get();
                                     Mockito.framework().addListener(mockitoTestListener);
                                     // init annotated mocks before tests
+                                    /**
+                                     *
+                                     * 为给定的testClass初始化带有Mockito注释的对象:@Mock， @Spy， @Captor， @ injectmock
+                                     * 参见javadoc中的MockitoAnnotations类的示例。
+                                     *
+                                     */
                                     closeable = MockitoAnnotations.openMocks(target);
                                 } else {
                                     closeable = null;

@@ -31,6 +31,12 @@ class InvocationNotifierHandler<T> implements MockHandler<T> {
     @Override
     public Object handle(Invocation invocation) throws Throwable {
         try {
+            /**
+             * 这里的mockHandler就是 NullResultGuardian 。 NullResultGuardian 中的mockHandler就是 MockHandlerImpl
+             *
+             * 具体参考org.mockito.internal.handler.MockHandlerFactory#createMockHandler(org.mockito.mock.MockCreationSettings)
+             * MockUtil.createMockHandler 会创建 MockHandlerImpl
+             */
             Object returnedValue = mockHandler.handle(invocation);
             notifyMethodCall(invocation, returnedValue);
             return returnedValue;

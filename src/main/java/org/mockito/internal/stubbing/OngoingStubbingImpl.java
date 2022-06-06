@@ -29,6 +29,7 @@ public class OngoingStubbingImpl<T> extends BaseStubbing<T> {
             throw incorrectUseOfApi();
         }
 
+        //把这个answer加入到invocationContainer对象中保存
         invocationContainer.addAnswer(answer, strictness);
         return new ConsecutiveStubbing<T>(invocationContainer);
     }

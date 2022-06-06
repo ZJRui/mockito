@@ -35,6 +35,7 @@ public class StubbedInvocationMatcher extends InvocationMatcher implements Seria
     @Override
     public Object answer(InvocationOnMock invocation) throws Throwable {
         // see ThreadsShareGenerouslyStubbedMockTest
+        // 从之前放进来的answers获取最新的那个
         Answer a;
         synchronized (answers) {
             a = answers.size() == 1 ? answers.peek() : answers.poll();

@@ -1,0 +1,335 @@
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@18b4aac2
+  +-sun.misc.Launcher$ExtClassLoader@6767c1fc
+
+Location:
+/Users/jingrzhang/sourceCodes/mockito/build/classes/java/main/
+
+/*
+ * Decompiled with CFR.
+ *
+ * Could not load the following classes:
+ *  org.mockito.internal.creation.bytebuddy.MockAccess
+ *  org.mockito.internal.creation.bytebuddy.MockMethodInterceptor
+ *  org.mockito.internal.creation.bytebuddy.MockMethodInterceptor$DispatcherDefaultingToRealMethod
+ *  org.mockito.internal.creation.bytebuddy.MockMethodInterceptor$ForEquals
+ *  org.mockito.internal.creation.bytebuddy.MockMethodInterceptor$ForHashCode
+ */
+package org.mockito.codegen;
+
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Spliterator;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m$auxiliary$0VR89SN5;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m$auxiliary$5Bj4ieM4;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m$auxiliary$DJ3RUnqb;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m$auxiliary$FdpyymLH;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m$auxiliary$iSwhoLiK;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m$auxiliary$kCaT1J46;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m$auxiliary$rytyj3al;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m$auxiliary$wg5rNezA;
+import org.mockito.codegen.List$MockitoMock$jukTZ93m$auxiliary$yeul8oXh;
+import org.mockito.internal.creation.bytebuddy.MockAccess;
+import org.mockito.internal.creation.bytebuddy.MockMethodInterceptor;
+
+
+
+
+可以看到几点关键的地方：https://blog.csdn.net/yitian_z/article/details/114223395
+
+持有一个MockMethodInterceptor对象
+继承了MockAccess
+List原来的方法都被DispatcherDefaultingToRealMethod拦截了
+MockMethodInterceptor.doIntercept方法
+
+其中，DispatcherDefaultingToRealMethod是MockMethodInterceptor的内部类，最终它还是调用MockMethodInterceptor的doIntercept，而该方法中调用的是MockHanderImpl.handle方法：
+
+
+
+public class List$MockitoMock$jukTZ93m
+implements List,
+MockAccess {   //--------------------------------------> 实现了MockAccess接口  getMockitoInterceptor
+    private static final long serialVersionUID = 42L;
+    private MockMethodInterceptor mockitoInterceptor; //----------------------------------->持有一个MockMethodInterceptor 对象， MockMethodInterceptor 的doIntercept方法内部会调用MockHandlerImpl的handle方法
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$gs4cee0;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$77a53p0;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$479u1c1;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$pa58dn1;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$2v2l442;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$itsld03;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$tm4die2;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$idijvh3;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$ialm821;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$vv27a83;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$4cscpe1;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$pqjhh82;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$bp48n33;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$8o98bj1;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$3um2h43;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$ascqpd0;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$5p89p02;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$g7qoll1;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$6epee82;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$ivs3a83;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$bbf8080;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$3us6oc3;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$61en0h1;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$7m9oaq0;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$4i8d8f1;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$v9lk1j0;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$q0m7l61;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$eqbjn92;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$2ff4l01;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$aqin4c0;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$sgg2351;
+    private static final /* synthetic */ Method cachedValue$xiVxa7lf$dc8ju02;
+
+    public String toString() {
+        return (String)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptSuperCallable((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Method)cachedValue$xiVxa7lf$4cscpe1, (Object[])new Object[0], (Callable)new List$MockitoMock$jukTZ93m$auxiliary$kCaT1J46(this));
+    }
+
+    protected Object clone() throws CloneNotSupportedException {
+        return MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptSuperCallable((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Method)cachedValue$xiVxa7lf$7m9oaq0, (Object[])new Object[0], (Callable)new List$MockitoMock$jukTZ93m$auxiliary$yeul8oXh(this));
+    }
+
+    @Override
+    public void forEach(Consumer consumer) {
+        MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptSuperCallable((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Method)cachedValue$xiVxa7lf$ascqpd0, (Object[])new Object[]{consumer}, (Callable)new List$MockitoMock$jukTZ93m$auxiliary$0VR89SN5(this, consumer));
+    }
+
+    @Override
+    public Stream stream() {
+        return (Stream)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptSuperCallable((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Method)cachedValue$xiVxa7lf$4i8d8f1, (Object[])new Object[0], (Callable)new List$MockitoMock$jukTZ93m$auxiliary$rytyj3al(this));
+    }
+
+    @Override
+    public boolean removeIf(Predicate predicate) {
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptSuperCallable((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Method)cachedValue$xiVxa7lf$aqin4c0, (Object[])new Object[]{predicate}, (Callable)new List$MockitoMock$jukTZ93m$auxiliary$FdpyymLH(this, predicate));
+    }
+
+    @Override
+    public Stream parallelStream() {
+        return (Stream)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptSuperCallable((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Method)cachedValue$xiVxa7lf$bbf8080, (Object[])new Object[0], (Callable)new List$MockitoMock$jukTZ93m$auxiliary$DJ3RUnqb(this));
+    }
+
+    @Override
+    public boolean add(Object object) { //------------------------------------> List接口的所有方法都被代理
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)false, (Method)cachedValue$xiVxa7lf$sgg2351, (Object[])new Object[]{object});
+    }
+
+    public void add(int n, Object object) {
+        MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$3us6oc3, (Object[])new Object[]{n, object});
+    }
+
+    @Override
+    public boolean remove(Object object) {
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)false, (Method)cachedValue$xiVxa7lf$v9lk1j0, (Object[])new Object[]{object});
+    }
+
+    public Object remove(int n) {
+        return MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$gs4cee0, (Object[])new Object[]{n});
+    }
+
+    public Object get(int n) {
+        return MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$2ff4l01, (Object[])new Object[]{n});
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return MockMethodInterceptor.ForEquals.doIdentityEquals((Object)this, (Object)object);
+    }
+
+    @Override
+    public int hashCode() {
+        return MockMethodInterceptor.ForHashCode.doIdentityHashCode((Object)this);
+    }
+
+    @Override
+    public int indexOf(Object object) {
+        return (Integer)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)0, (Method)cachedValue$xiVxa7lf$tm4die2, (Object[])new Object[]{object});
+    }
+
+    @Override
+    public void clear() {
+        MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$bp48n33, (Object[])new Object[0]);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)false, (Method)cachedValue$xiVxa7lf$dc8ju02, (Object[])new Object[0]);
+    }
+
+    @Override
+    public int lastIndexOf(Object object) {
+        return (Integer)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)0, (Method)cachedValue$xiVxa7lf$77a53p0, (Object[])new Object[]{object});
+    }
+
+    @Override
+    public boolean contains(Object object) {
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)false, (Method)cachedValue$xiVxa7lf$q0m7l61, (Object[])new Object[]{object});
+    }
+
+    public void replaceAll(UnaryOperator unaryOperator) {
+        MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptSuperCallable((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Method)cachedValue$xiVxa7lf$61en0h1, (Object[])new Object[]{unaryOperator}, (Callable)new List$MockitoMock$jukTZ93m$auxiliary$iSwhoLiK(this, unaryOperator));
+    }
+
+    @Override
+    public int size() {
+        return (Integer)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)0, (Method)cachedValue$xiVxa7lf$479u1c1, (Object[])new Object[0]);
+    }
+
+    public List subList(int n, int n2) {
+        return (List)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$idijvh3, (Object[])new Object[]{n, n2});
+    }
+
+    @Override
+    public Object[] toArray() {
+        return (Object[])MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$pa58dn1, (Object[])new Object[0]);
+    }
+
+    @Override
+    public Object[] toArray(Object[] objectArray) {
+        return (Object[])MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$eqbjn92, (Object[])new Object[]{objectArray});
+    }
+
+    @Override
+    public Iterator iterator() {
+        return (Iterator)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$itsld03, (Object[])new Object[0]);
+    }
+
+    @Override
+    public Spliterator spliterator() {
+        return (Spliterator)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptSuperCallable((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Method)cachedValue$xiVxa7lf$ialm821, (Object[])new Object[0], (Callable)new List$MockitoMock$jukTZ93m$auxiliary$5Bj4ieM4(this));
+    }
+
+    @Override
+    public boolean addAll(Collection collection) {
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)false, (Method)cachedValue$xiVxa7lf$6epee82, (Object[])new Object[]{collection});
+    }
+
+    public boolean addAll(int n, Collection collection) {
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)false, (Method)cachedValue$xiVxa7lf$pqjhh82, (Object[])new Object[]{n, collection});
+    }
+
+    public Object set(int n, Object object) {
+        return MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$5p89p02, (Object[])new Object[]{n, object});
+    }
+
+    @Override
+    public boolean containsAll(Collection collection) {
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)false, (Method)cachedValue$xiVxa7lf$8o98bj1, (Object[])new Object[]{collection});
+    }
+
+    @Override
+    public boolean removeAll(Collection collection) {
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)false, (Method)cachedValue$xiVxa7lf$3um2h43, (Object[])new Object[]{collection});
+    }
+
+    @Override
+    public boolean retainAll(Collection collection) {
+        return (Boolean)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Object)false, (Method)cachedValue$xiVxa7lf$2v2l442, (Object[])new Object[]{collection});
+    }
+
+    public ListIterator listIterator(int n) {
+        return (ListIterator)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$vv27a83, (Object[])new Object[]{n});
+    }
+
+    public ListIterator listIterator() {
+        return (ListIterator)MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptAbstract((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, null, (Method)cachedValue$xiVxa7lf$ivs3a83, (Object[])new Object[0]);
+    }
+
+    public void sort(Comparator comparator) {
+        MockMethodInterceptor.DispatcherDefaultingToRealMethod.interceptSuperCallable((Object)this, (MockMethodInterceptor)this.mockitoInterceptor, (Method)cachedValue$xiVxa7lf$g7qoll1, (Object[])new Object[]{comparator}, (Callable)new List$MockitoMock$jukTZ93m$auxiliary$wg5rNezA(this, comparator));
+    }
+
+    public void setMockitoInterceptor(MockMethodInterceptor mockMethodInterceptor) {
+        this.mockitoInterceptor = mockMethodInterceptor;
+    }
+
+    public MockMethodInterceptor getMockitoInterceptor() {
+        return this.mockitoInterceptor;
+    }
+
+    static {
+        cachedValue$xiVxa7lf$gs4cee0 = List.class.getMethod("remove", Integer.TYPE);
+        cachedValue$xiVxa7lf$77a53p0 = List.class.getMethod("lastIndexOf", Object.class);
+        cachedValue$xiVxa7lf$479u1c1 = List.class.getMethod("size", new Class[0]);
+        cachedValue$xiVxa7lf$pa58dn1 = List.class.getMethod("toArray", new Class[0]);
+        cachedValue$xiVxa7lf$2v2l442 = List.class.getMethod("retainAll", Collection.class);
+        cachedValue$xiVxa7lf$itsld03 = List.class.getMethod("iterator", new Class[0]);
+        cachedValue$xiVxa7lf$tm4die2 = List.class.getMethod("indexOf", Object.class);
+        cachedValue$xiVxa7lf$idijvh3 = List.class.getMethod("subList", Integer.TYPE, Integer.TYPE);
+        cachedValue$xiVxa7lf$ialm821 = List.class.getMethod("spliterator", new Class[0]);
+        cachedValue$xiVxa7lf$vv27a83 = List.class.getMethod("listIterator", Integer.TYPE);
+        cachedValue$xiVxa7lf$4cscpe1 = Object.class.getMethod("toString", new Class[0]);
+        cachedValue$xiVxa7lf$pqjhh82 = List.class.getMethod("addAll", Integer.TYPE, Collection.class);
+        cachedValue$xiVxa7lf$bp48n33 = List.class.getMethod("clear", new Class[0]);
+        cachedValue$xiVxa7lf$8o98bj1 = List.class.getMethod("containsAll", Collection.class);
+        cachedValue$xiVxa7lf$3um2h43 = List.class.getMethod("removeAll", Collection.class);
+        cachedValue$xiVxa7lf$ascqpd0 = Iterable.class.getMethod("forEach", Consumer.class);
+        cachedValue$xiVxa7lf$5p89p02 = List.class.getMethod("set", Integer.TYPE, Object.class);
+        cachedValue$xiVxa7lf$g7qoll1 = List.class.getMethod("sort", Comparator.class);
+        cachedValue$xiVxa7lf$6epee82 = List.class.getMethod("addAll", Collection.class);
+        cachedValue$xiVxa7lf$ivs3a83 = List.class.getMethod("listIterator", new Class[0]);
+        cachedValue$xiVxa7lf$bbf8080 = Collection.class.getMethod("parallelStream", new Class[0]);
+        cachedValue$xiVxa7lf$3us6oc3 = List.class.getMethod("add", Integer.TYPE, Object.class);
+        cachedValue$xiVxa7lf$61en0h1 = List.class.getMethod("replaceAll", UnaryOperator.class);
+        cachedValue$xiVxa7lf$7m9oaq0 = Object.class.getDeclaredMethod("clone", new Class[0]);
+        cachedValue$xiVxa7lf$4i8d8f1 = Collection.class.getMethod("stream", new Class[0]);
+        cachedValue$xiVxa7lf$v9lk1j0 = List.class.getMethod("remove", Object.class);
+        cachedValue$xiVxa7lf$q0m7l61 = List.class.getMethod("contains", Object.class);
+        cachedValue$xiVxa7lf$eqbjn92 = List.class.getMethod("toArray", Object[].class);
+        cachedValue$xiVxa7lf$2ff4l01 = List.class.getMethod("get", Integer.TYPE);
+        cachedValue$xiVxa7lf$aqin4c0 = Collection.class.getMethod("removeIf", Predicate.class);
+        cachedValue$xiVxa7lf$sgg2351 = List.class.getMethod("add", Object.class);
+        cachedValue$xiVxa7lf$dc8ju02 = List.class.getMethod("isEmpty", new Class[0]);
+    }
+
+    final /* synthetic */ Stream stream$accessor$xiVxa7lf$uimou10() {
+        return List.super.stream();
+    }
+
+    final /* synthetic */ void replaceAll$accessor$xiVxa7lf$uimou10(UnaryOperator unaryOperator) {
+        List.super.replaceAll(unaryOperator);
+    }
+
+    final /* synthetic */ void forEach$accessor$xiVxa7lf$uimou10(Consumer consumer) {
+        List.super.forEach(consumer);
+    }
+
+    final /* synthetic */ Stream parallelStream$accessor$xiVxa7lf$uimou10() {
+        return List.super.parallelStream();
+    }
+
+    final /* synthetic */ boolean removeIf$accessor$xiVxa7lf$uimou10(Predicate predicate) {
+        return List.super.removeIf(predicate);
+    }
+
+    final /* synthetic */ Spliterator spliterator$accessor$xiVxa7lf$uimou10() {
+        return List.super.spliterator();
+    }
+
+    final /* synthetic */ String toString$accessor$xiVxa7lf() {
+        return super.toString();
+    }
+
+    final /* synthetic */ Object clone$accessor$xiVxa7lf() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    final /* synthetic */ void sort$accessor$xiVxa7lf$uimou10(Comparator comparator) {
+        List.super.sort(comparator);
+    }
+}
+
+Affect(row-cnt:10) cost in 372 ms.

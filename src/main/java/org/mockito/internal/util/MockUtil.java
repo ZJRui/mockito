@@ -34,12 +34,24 @@ public class MockUtil {
     }
 
     public static <T> T createMock(MockCreationSettings<T> settings) {
+        /**
+         * 一是创建了MockHandler对象，MockHandler是一个接口，通过追查createMockHandler函数我们可以清楚，
+         * MockHandler对象的实例是InvocationNotifierHandler类型，但它只是负责对外的包装，
+         * 内部实际起作用的是MockHandlerImpl这个家伙，也是上文类图右下角的那位，这个类可谓承载了Mockito的主要逻辑，我们后面会详细的来说明。这里要先有个印象。
+         *
+         */
         MockHandler mockHandler = createMockHandler(settings);
 
+        //spied:间谍
         Object spiedInstance = settings.getSpiedInstance();
 
         T mock;
         if (spiedInstance != null) {
+            /**
+             * 接着往下看，会调用mockMaker来创建最终的实例，这个MockHandler也是一个接口，其实现为ByteBuddyMockMaker，我们追进去看一下createMock函数（省略异常处理代
+             *
+             * 默认情况下 mockMaker为 ByteBuddyMockMaker
+             */
             mock =
                     mockMaker
                             .createSpy(settings, mockHandler, (T) spiedInstance)
@@ -50,6 +62,8 @@ public class MockUtil {
                                         return instance;
                                     });
         } else {
+            //默认情况下 mockMaker为 ByteBuddyMockMaker
+            //ByteBuddyMockMaker的createMock 会调用SubclassByteBuddyMockMaker的createMock
             mock = mockMaker.createMock(settings, mockHandler);
         }
 

@@ -124,6 +124,27 @@ class SubclassBytecodeGenerator implements BytecodeGenerator {
 
     @Override
     public <T> Class<? extends T> mockClass(MockFeatures<T> features) {
+        /**
+         *
+         * 这里出来了两个新事物，interceptor与handler都是什么鬼？通过interceptor 参数的注解关键字mockitoInterceptor，
+         * 我们可以知道，这个也许就是前文所说实现MockAccess接口所传进来的，而这个handler，则是我们前文所说的重点:
+         * MockHandlerImpl!(准确的说是InvocationNotifierHandler，只不过其内部将主要逻辑都转交给了MockHandlerImpl， 所以下文都已MockHandlerImpl为主)
+         *
+         *
+         * 注意 MultipleParentClassLoader是 bytebutty的 组件。
+         * appendMostSpecific的主要功能是：
+         * 追加给定类型的类装入器，但过滤类装入器层次结构中的任何副本。引导类装入器隐式跳过，因为它是任何类装入器的隐式父类。类装入器放在类装入器列表的前面。
+         * 参数:
+         * type—收集类装入器的类型。
+         * 返回:
+         * 一个新的构建器实例，带有所提供类型的附加类加载器(如果它们还没有被收集的话)。
+         *
+         *
+         * 这里是生成代理类的关键代码。Mockito使用的是ByteBuddy这个框架，它并不需要编译器的帮助，而是直接生成class，
+         * 然后使用ClassLoader来进行加载，感兴趣的可以深入研究，其地址为:https://github.com/raphw/byte-buddy，简单入门介绍可见：https://zhuanlan.zhihu.com/p/151843984。
+         *
+         */
+
         MultipleParentClassLoader.Builder loaderBuilder =
                 new MultipleParentClassLoader.Builder()
                         .appendMostSpecific(features.mockedType)
@@ -131,9 +152,14 @@ class SubclassBytecodeGenerator implements BytecodeGenerator {
                         .appendMostSpecific(
                                 MockAccess.class, DispatcherDefaultingToRealMethod.class)
                         .appendMostSpecific(
+                            /**
+                             *
+                             */
                                 MockMethodInterceptor.class,
                                 MockMethodInterceptor.ForHashCode.class,
                                 MockMethodInterceptor.ForEquals.class);
+
+
         ClassLoader contextLoader = currentThread().getContextClassLoader();
         boolean shouldIncludeContextLoader = true;
         if (needsSamePackageClassLoader(features)) {

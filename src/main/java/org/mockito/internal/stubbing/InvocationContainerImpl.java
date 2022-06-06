@@ -37,6 +37,10 @@ public class InvocationContainerImpl implements InvocationContainer, Serializabl
     private MatchableInvocation invocationForStubbing;
 
     public InvocationContainerImpl(MockCreationSettings mockSettings) {
+        /**
+         * 创建  RegisteredInvocations
+         * 如果 mockSettings.isStubOnly() 则返回：  SingleRegisteredInvocation ；否则使用 DefaultRegisteredInvocations
+         */
         this.registeredInvocations = createRegisteredInvocations(mockSettings);
         this.mockStrictness = mockSettings.getStrictness();
         this.doAnswerStyleStubbing = new DoAnswerStyleStubbing();
@@ -59,7 +63,12 @@ public class InvocationContainerImpl implements InvocationContainer, Serializabl
     /** Adds new stubbed answer and returns the invocation matcher the answer was added to. */
     public StubbedInvocationMatcher addAnswer(
             Answer answer, boolean isConsecutive, Strictness stubbingStrictness) {
+
+        // 1.获取stub的调用
+
         Invocation invocation = invocationForStubbing.getInvocation();
+        // 2.标记stub完成
+
         mockingProgress().stubbingCompleted();
         if (answer instanceof ValidableAnswer) {
             ((ValidableAnswer) answer).validateFor(invocation);

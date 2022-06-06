@@ -38,6 +38,11 @@ class JUnitSessionStore {
                                     .startMocking();
                     closeable = null;
                 } else {
+
+                    /**
+                     * 为给定的testClass初始化带有Mockito注释的对象:@Mock， @Spy， @Captor， @ injectmock
+                     * 参见javadoc中的MockitoAnnotations类的示例。
+                     */
                     closeable = MockitoAnnotations.openMocks(target);
                 }
                 Throwable testFailure = evaluateSafely(base);

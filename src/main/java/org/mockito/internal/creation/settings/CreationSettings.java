@@ -27,6 +27,25 @@ public class CreationSettings<T> implements MockCreationSettings<T>, Serializabl
     protected Class<T> typeToMock;
     protected Set<Class<?>> extraInterfaces = new LinkedHashSet<>();
     protected String name;
+    /**
+     * 一个测试用例
+     *
+     *   @Test
+     *     public void should_scream_when_spy_created_with_wrong_type() {
+     *         // given
+     *         List list = new LinkedList();
+     *         try {
+     *             // when
+     *             mock(List.class, withSettings().spiedInstance(list));
+     *             fail();
+     *             // then
+     *         } catch (MockitoException e) {
+     *         }
+     *     }
+     *
+     *     通过 withSettings返回值 MockSetting的 spiedInstance方法 设置 spiedInstance
+     *
+     */
     protected Object spiedInstance;
     protected Answer<Object> defaultAnswer;
     protected MockName mockName;

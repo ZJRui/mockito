@@ -1638,6 +1638,10 @@ public class Mockito extends ArgumentMatchers {
      * <p>
      * This implementation first tries the global configuration and if there is no global configuration then
      * it will use a default answer that returns zeros, empty collections, nulls, etc.
+     *
+     * 如果mock没有存根，则每个mock的默认答案。通常它只返回一些空值。
+     * 可以使用Answer定义非存根调用的返回值。
+     * 这个实现首先尝试全局配置，如果没有全局配置，那么它将使用返回0、空集合、null等的默认答案。
      */
     public static final Answer<Object> RETURNS_DEFAULTS = Answers.RETURNS_DEFAULTS;
 
@@ -1668,6 +1672,12 @@ public class Mockito extends ArgumentMatchers {
      *   //Instead, SmartNullPointerException is thrown.
      *   //Exception's cause links to unstubbed <i>mock.getStuff()</i> - just click on the stack trace.
      * </code></pre>
+     *
+     *
+     * 可选的答案，用于模拟(Class, Answer)。
+     * 可以使用Answer定义非存根调用的返回值。
+     * 这种实现在处理遗留代码时很有帮助。非存根方法通常返回null。如果你的代码使用非存根调用返回的对象，你会得到一个NullPointerException。这个Answer的实现返回SmartNull而不是null。SmartNull给出了比NPE更好的异常消息，因为它指出了调用unstub方法的那一行。您只需单击堆栈跟踪。
+     * ReturnsSmartNulls首先尝试返回普通值(0，空集合，空字符串，等等)，然后它尝试返回SmartNull。如果返回类型为final，则返回null。
      */
     public static final Answer<Object> RETURNS_SMART_NULLS = Answers.RETURNS_SMART_NULLS;
 
@@ -1978,6 +1988,13 @@ public class Mockito extends ArgumentMatchers {
      * @return mock object
      */
     public static <T> T mock(Class<T> classToMock, MockSettings mockSettings) {
+        /**
+         * Mockito类中有几个mock函数的重载，最终都会调到mock(Class<T> classToMock, MockSettings mockSettings)，
+         * 接受一个class类型与一个mockSettings，class就是我们需要mock对象的类型，
+         * 而mockSettings则记录着此次mock的一些信息。mock的行为实则转交个MockitoCore：
+         *
+         *
+         */
         return MOCKITO_CORE.mock(classToMock, mockSettings);
     }
 
@@ -2094,6 +2111,18 @@ public class Mockito extends ArgumentMatchers {
      * @since 1.10.12
      */
     public static <T> T spy(Class<T> classToSpy) {
+        /**
+         * spy 方法在能力和 mock 类似，spy 在构造代理对象时的差别仅为增加了一个真实对象的成员变量，并把返回模板替换为 CallsRealMethods 。
+         * 因此spy后的对象，如果没有对其中的方法mock，在answer方法调用时调用的是真实的方法（抽象方法会返回默认值）：
+         *
+         *     // org.mockito.internal.stubbing.answers.CallsRealMethods#answer
+         *     public Object answer(InvocationOnMock invocation) throws Throwable {
+         *         if (Modifier.isAbstract(invocation.getMethod().getModifiers())) {
+         *             return RETURNS_DEFAULTS.answer(invocation);
+         *         }
+         *         return invocation.callRealMethod();
+         *     }
+         */
         return MOCKITO_CORE.mock(
                 classToSpy, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
     }
@@ -2374,6 +2403,12 @@ public class Mockito extends ArgumentMatchers {
      *         <strong>Do not</strong> create a reference to this returned object.
      */
     public static <T> OngoingStubbing<T> when(T methodCall) {
+
+        /**
+         * when和thenReturn方法用于stub的创建，when方法调用的也是MockitoCore中方法：
+         *     // 注意：when方法的参数methodCall实际上是无用的
+         *
+         */
         return MOCKITO_CORE.when(methodCall);
     }
 

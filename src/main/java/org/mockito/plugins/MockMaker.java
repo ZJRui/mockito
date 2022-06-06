@@ -52,6 +52,14 @@ import static org.mockito.internal.util.StringUtil.join;
 public interface MockMaker {
 
     /**
+     * 如果你想提供自己的MockMaker实现，这个方法应该:
+     * 创建实现设置的代理对象。typeToMock，可能还有settings.extraInterfaces。
+     * 您可以使用设置中的信息来创建/配置代理对象。
+     * 您的代理对象应该携带处理程序。例如，如果您生成字节码来创建代理，那么您可以生成一个额外的字段来保留生成对象的处理程序。当调用getHandler(Object)时，
+     * 需要MockMaker的实现来提供处理程序的这个实例。
+     *
+     *
+     *
      * If you want to provide your own implementation of {@code MockMaker} this method should:
      * <ul>
      *     <li>Create a proxy object that implements {@code settings.typeToMock} and potentially also {@code settings.extraInterfaces}.</li>

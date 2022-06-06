@@ -142,6 +142,9 @@ public class MockMethodInterceptor implements Serializable {
             if (interceptor == null) {
                 return superCall.call();
             }
+            /**
+             * 这个DispatcherDefaultingToRealMethod函数内部将处理权转交给interceptor，而interceptor 内部又会转交给handler处理:
+             */
             return interceptor.doIntercept(
                     mock, invokedMethod, arguments, new RealMethod.FromCallable(superCall));
         }
