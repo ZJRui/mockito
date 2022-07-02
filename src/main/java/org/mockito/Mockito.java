@@ -2042,6 +2042,8 @@ public class Mockito extends ArgumentMatchers {
      * <li>Sometimes it's impossible or impractical to use {@link Mockito#when(Object)} for stubbing spies.
      * Therefore for spies it is recommended to always use <code>doReturn</code>|<code>Answer</code>|<code>Throw()</code>|<code>CallRealMethod</code>
      * family of methods for stubbing. Example:
+     * 有时，当(Object)用于存根间谍是不可能或不切实际的。因此，对于间谍，
+     * 建议始终使用doReturn|Answer|Throw()|CallRealMethod方法家族用于存根。例子:
      *
      * <pre class="code"><code class="java">
      *   List list = new LinkedList();
@@ -2072,6 +2074,20 @@ public class Mockito extends ArgumentMatchers {
      * <p>Note that the spy won't have any annotations of the spied type, because CGLIB won't rewrite them.
      * It may troublesome for code that rely on the spy to have these annotations.</p>
      *
+     *
+     * <p>
+     *     制造出一个真正目标的间谍。间谍调用真正的方法，除非它们是存根的。
+     * 应该谨慎地偶尔使用真正的间谍，例如在处理遗留代码时。
+     * 与往常一样，您将读取部分模拟警告:面向对象编程通过将复杂性划分为单独的、特定的SRPy对象来处理复杂性。部分模拟如何适合这个范例?嗯，它就是不……部分模拟通常意味着复杂性已经转移到同一对象上的不同方法。在大多数情况下，这不是您想要设计应用程序的方式。
+     * 然而，在极少数情况下，部分模拟可以派上用场:处理您不能轻易更改的代码(第三方接口、遗留代码的临时重构等)。然而，我不会将部分模拟用于新的、测试驱动的、设计良好的代码。
+     * 例子:
+     * <p>spy 和 mock不同，不同点是：</p>
+     * <ol>
+     *     <li>spy 的参数是对象示例，mock 的参数是 class。</li>
+     *     <li>被 spy 的对象，调用其方法时默认会走真实方法。mock 对象不会。</li>
+     * </ol>
+     *
+     * </p>
      *
      * @param object
      *            to spy on
@@ -2405,10 +2421,33 @@ public class Mockito extends ArgumentMatchers {
     public static <T> OngoingStubbing<T> when(T methodCall) {
 
         /**
+         *
+         *每一个线程都会有一个 MockinigProgressImpl 对象， 这个对象 是在调用
+         * org.mockito.internal.progress.ThreadSafeMockingProgress#mockingProgress() 方法的时候触发创建。
+         *
+         * 当执行mock对象的 方法的时候，  下面的mockingProgress 方法会返回MockingProgresssImpl对象，然后 将OngoingStubbingImpl
+         * 对象记录到 MockingProgressimpl对象中.
+         *
+         * 而OngoingStubbingImpl对象中记录了 调用信息invocationContainer。
+         *
+         * 那么也就是说  mock对象的方法执行 -->创建OngoingStubbingImpl 记录方法调用信息， 这个OngoingStubbingImpl 被保存到了
+         * 当前线程的 MockingProgressImpl 中。
+         *
+         * when方法就是从 MockingProgreessImpl 中 获取 当前的OngoingStubbingImpl 【注意是当前的 OngoingStubbingImpl  ，因为
+         * mock对象的每次方法调用都会被MockHandlerImpl拦截，创建新的OngoingStubbingImpl 记录到MockingProgressImpl中 】，
+         * 然后 这个被获取到的OngoingStubbingImpl 就是when方法的返回值。  when方法的返回值会被调用.thenReturn,
+         * 因此也就是执行OngoingStuggingImpl的 thenReturn. 在thenReturn 方法中会创建一个answer， 然后这个answer被加入到了invocationContainer 中。
+         *  invocationContainer.addAnswer(answer, strictness);
+         *
+         *  因此这就导致 当我们下次调用mock对象的这个方法的时候 就会从这个invocationContainer 对象中findAnswer
+         *
+         * --------------------
          * when和thenReturn方法用于stub的创建，when方法调用的也是MockitoCore中方法：
          *     // 注意：when方法的参数methodCall实际上是无用的
          *
          */
+
+
         return MOCKITO_CORE.when(methodCall);
     }
 
@@ -2434,6 +2473,20 @@ public class Mockito extends ArgumentMatchers {
      *
      * <p>
      * See examples in javadoc for {@link Mockito} class
+     *
+     *<p>
+     *  验证曾经发生过的某些行为。
+     * 别名验证(mock, times(1))
+     * 验证(模拟)。someMethod(“参数”);
+     *
+     * 以上相当于:
+     * (1)验证(模拟倍)。someMethod(“参数”);
+     *
+     * 传递的参数使用equals()方法进行比较。阅读argumentcapture或ArgumentMatcher，找出匹配/断言传递的参数的其他方法。
+     * 虽然可以验证一个存根调用，但通常这只是多余的。假设您已经存根了foo.bar()。如果你的代码关心foo.bar()返回什么，那么就会有其他东西出错(通常在执行verify()之前)。如果你的代码不关心foo.bar()返回什么，那么它就不应该被存根。
+     *</p>
+     * Mockito 测试框架中提供了 Mockito.verify 静态方法让我们可以方便的进行验证性测试，
+     * 比如方法调用验证、方法调用次数验证、方法调用顺序验证等，下面看看具体的代码。
      *
      * @param mock to be verified
      * @return mock object itself

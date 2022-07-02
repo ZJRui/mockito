@@ -88,6 +88,7 @@ configurations {
 
 dependencies {
     api libraries.bytebuddy, libraries.bytebuddyagent
+    implementation 'org.projectlombok:lombok:1.18.22'
 
     compileOnly libraries.junit4, libraries.hamcrest, libraries.opentest4j
     implementation libraries.objenesis

@@ -73,7 +73,29 @@ import org.mockito.stubbing.Answer;
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Documented
+@SuppressWarnings("all")
 public @interface Mock {
+    /***
+     *
+     * 第一中方式： Mockito.mock(ArrayList.class)
+     * 第二种方式就是使用 @Mock 注解方式来创建 Mock 对象，使用该方式创需要注意的是要在运行测试方法前使用
+     * MockitoAnnotations.initMocks(this) 或者单元测试类上加上 @ExtendWith(MockitoExtension.class) 注解，
+     * 如下所示代码创建了一个 List 类型的 Mock 对象(PS: @BeforeEach 是 Junit 5 的注解，功能类似于 Junit 4 的 @Before 注解。)：
+     *
+     * //@ExtendWith(MockitoExtension.class)
+     * public class MockitoTest {
+     *
+     *   @Mock
+     *   private List<String> mockList;
+     *
+     *   @BeforeEach
+     *   public void beforeEach() {
+     *     MockitoAnnotations.initMocks(this);
+     *   }
+     * }
+     *
+     *
+     */
 
     /**
      * Mock will have custom answer, see {@link MockSettings#defaultAnswer(Answer)}.

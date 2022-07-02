@@ -28,6 +28,7 @@ import org.mockito.verification.VerificationMode;
  *
  * @param <T> type of mock object to handle
  */
+@SuppressWarnings("all")
 public class MockHandlerImpl<T> implements MockHandler<T> {
 
     private static final long serialVersionUID = -2917871070982574165L;
@@ -155,6 +156,29 @@ public class MockHandlerImpl<T> implements MockHandler<T> {
          *
          */
         OngoingStubbingImpl<T> ongoingStubbing = new OngoingStubbingImpl<T>(invocationContainer);
+        /**
+         * 每一个线程都会有一个 MockinigProgressImpl 对象， 这个对象 是在调用
+         * org.mockito.internal.progress.ThreadSafeMockingProgress#mockingProgress() 方法的时候触发创建。
+         *
+         * 当执行mock对象的 方法的时候，  下面的mockingProgress 方法会返回MockingProgresssImpl对象，然后 将OngoingStubbingImpl
+         * 对象记录到 MockingProgressimpl对象中.
+         *
+         * 而OngoingStubbingImpl对象中记录了 调用信息invocationContainer。
+         *
+         * 那么也就是说  mock对象的方法执行 -->创建OngoingStubbingImpl 记录方法调用信息， 这个OngoingStubbingImpl 被保存到了
+         * 当前线程的 MockingProgressImpl 中。
+         *
+         * when方法就是从 MockingProgreessImpl 中 获取 当前的OngoingStubbingImpl 【注意是当前的 OngoingStubbingImpl  ，因为
+         * mock对象的每次方法调用都会被MockHandlerImpl拦截，创建新的OngoingStubbingImpl 记录到MockingProgressImpl中 】，
+         * 然后 这个被获取到的OngoingStubbingImpl 就是when方法的返回值。  when方法的返回值会被调用.thenReturn,
+         * 因此也就是执行OngoingStuggingImpl的 thenReturn. 在thenReturn 方法中会创建一个answer， 然后这个answer被加入到了invocationContainer 中。
+         *  invocationContainer.addAnswer(answer, strictness);
+         *
+         *  因此这就导致 当我们下次调用mock对象的这个方法的时候 就会从这个invocationContainer 对象中findAnswer
+         *
+         *
+         *
+         */
         mockingProgress().reportOngoingStubbing(ongoingStubbing);
 
         // look for existing answer for this invocation          // 为当前拦截的调用对象，查找存在的返回值对象answer

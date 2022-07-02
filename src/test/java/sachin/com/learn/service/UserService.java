@@ -6,4 +6,8 @@ public class UserService {
     public Student getStudent(Student student) {
         return student;
     }
+
+    public void run() {
+
+    }
 }

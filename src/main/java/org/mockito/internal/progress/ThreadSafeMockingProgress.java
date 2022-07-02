@@ -9,6 +9,11 @@ package org.mockito.internal.progress;
  */
 public class ThreadSafeMockingProgress {
 
+
+    /**
+     *  如果当前线程没有 MockingProgressImpl 对象，则为当前线程创建一个MockingProgressImpl对象
+     *
+     */
     private static final ThreadLocal<MockingProgress> MOCKING_PROGRESS_PROVIDER =
             new ThreadLocal<MockingProgress>() {
                 @Override

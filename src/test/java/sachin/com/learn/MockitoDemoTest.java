@@ -3,8 +3,10 @@ package sachin.com.learn;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.verification.VerificationMode;
 import sachin.com.learn.service.Student;
 import sachin.com.learn.service.UserService;
 
@@ -20,12 +22,22 @@ public class MockitoDemoTest {
         UserService mock = Mockito.mock(UserService.class);
         Student student = new Student();
         Mockito.when(mock.getStudent(student)).thenReturn(student);
+        //'when(T)' in 'org.mockito.Mockito' cannot be applied to '(void)'
+       // Mockito.when(mock.run()).getMock();
         Student student2 = new Student();
         Student student2Res = mock.getStudent(student2);
         Assert.assertEquals(student, student2Res);
+
     }
 
-
+    @Test
+    public void testExecuteMethodBeforeWhen(){
+        UserService mock = Mockito.mock(UserService.class);
+        mock.getStudent(Mockito.any());
+        Mockito.when(new Student("B")).thenReturn(new Student("C"));
+        Student a = mock.getStudent(new Student("A"));
+        System.out.println(a);
+    }
 
     @Test
     public void testGetMockListByteCode() throws Exception{
@@ -60,4 +72,7 @@ public class MockitoDemoTest {
         System.out.println(mockedList.getClass().getName());
 
     }
+
+    //验证方法发生的次数
+
 }

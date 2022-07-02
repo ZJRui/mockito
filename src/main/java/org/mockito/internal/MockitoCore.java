@@ -175,14 +175,81 @@ public class MockitoCore {
         return new MockedConstructionImpl<>(control);
     }
 
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     * @param methodCall
+     * @return
+     * @param <T>
+     */
+
     public <T> OngoingStubbing<T> when(T methodCall) {
         /**
+         *
+         * ----------------参考内容《Mockito单元测试框架-ongoingstubbing》
+         * when 方法接收的参数类型时T，这个T时方法预定义的类型T，T的作用时根据方法的入参 限定方法返回值的反省类型。
+         *
+         * Mockito.when(userService.getNameByUid(anyInt())).thenReturn(xx);
+         * 问题： getNameByUid的返回值时一个String类型，那么 上面的代码可以这样写吗？
+         * Mockito.when("abc").thenReturn(xx)
+         * 答案时不可以的， 因为 when方法虽然接受收一个String类型的参数，但是  第二中写法 没有执行mock对象的 getNameByUid 这个方法。
+         * 实际上在执行mock对象的getNameByUid 方法的时候 会创建一个方法调用对象信息保存到Mock对象的上下文中，这个是通过mock的拦截器实现的。
+         * 当调用when方法的时候，实际上是从该上下文中获取最后一个注册的方法调用，然后把thenReturn的参数作为其返回值保存。
+         *
+         * 然后当我们再次调用 mock对象的getNameByUid 方法时 之前已经记录的方法行为将被再次回访， 该方法触发拦截器重新调用并且返回我们在thenReturn
+         * 方法指定的返回值。
+         *
+         * 也就是说 以下两种方式都能实现mock
+         * （1）
+         *  Mockito.when(userService.getNameByUid(anyInt())).thenReturn(xx);
+         *  userService.getNameByUid(1)==xx
+         *  上面userService 是mock对象， 默认情况下 getNameByUid返回null，因此when方法接收的值其实是null， 也就是methodCall 为null，但是
+         *  我们知道getNameByUid返回的类型是String。
+         *   所以 when方法的methodCall 参数 在方法内实际没有使用到。
+         *  (2)
+         *  userSerivce.getNameByUid(12)//因为没有mock，所以方法返回值为null
+         *  when("abc").thenReturn(xx)
+         *  userService.getNameByUid(12)==xx
+         *  因为首先执行了 userSerivce.getNameByUid(12) 这就会 在mock上下文中记录一次方法调用
+         *  然后又执行了when.thenReturn 因此 thenReturn 的值就会记录到 getNameBYUid的方法调用中。
+         *  最后我们再次执行 userService.getNameByUid(12)就会返回xx
+         *
+         *
+         *---------------------------------------------------------------------------------------
+         *
+         *实现原理解析：
+         *每一个线程都会有一个 MockinigProgressImpl 对象， 这个对象 是在调用
+         * org.mockito.internal.progress.ThreadSafeMockingProgress#mockingProgress() 方法的时候触发创建。
+         *
+         * 当执行mock对象的 方法的时候，  下面的mockingProgress 方法会返回MockingProgresssImpl对象，然后 将OngoingStubbingImpl
+         * 对象记录到 MockingProgressimpl对象中.
+         *
+         * 而OngoingStubbingImpl对象中记录了 调用信息invocationContainer。
+         *
+         * 那么也就是说  mock对象的方法执行 -->创建OngoingStubbingImpl 记录方法调用信息， 这个OngoingStubbingImpl 被保存到了
+         * 当前线程的 MockingProgressImpl 中。
+         *
+         * when方法就是从 MockingProgreessImpl 中 获取 当前的OngoingStubbingImpl 【注意是当前的 OngoingStubbingImpl  ，因为
+         * mock对象的每次方法调用都会被MockHandlerImpl拦截，创建新的OngoingStubbingImpl 记录到MockingProgressImpl中 】，
+         * 然后 这个被获取到的OngoingStubbingImpl 就是when方法的返回值。  when方法的返回值会被调用.thenReturn,
+         * 因此也就是执行OngoingStuggingImpl的 thenReturn. 在thenReturn 方法中会创建一个answer， 然后这个answer被加入到了invocationContainer 中。
+         *  invocationContainer.addAnswer(answer, strictness);
+         *
+         *  因此这就导致 当我们下次调用mock对象的这个方法的时候 就会从这个invocationContainer 对象中findAnswer
+         *
+         *----------------------------------------
          *
          * 这个mockingProgress是个什么东西？OngoingStubbing又是什么呢？想要弄清楚来龙去脉，
          * 还记得刚才一直强调的MockHandlerImpl吗？上文说过，mock对象所有的方法最终都会交由MockHandlerImpl的handle方法处理，
          * 所以这注定是一个不一样的女子，不，方法：
          *
-         *  // 1.初始化MockProgressImpl对象
+         *  // 1.初始化/或者获取 MockProgressImpl对象
+         *
+         *
          */
         MockingProgress mockingProgress = mockingProgress();
         //        // 2.标记stub开始

@@ -21,6 +21,8 @@ import org.mockito.NotExtensible;
  *
  * //you can set different behavior for consecutive method calls.
  * //Last stubbing (e.g: thenReturn("foo")) determines the behavior of further consecutive calls.
+ * <p>你可以为连续的方法调用设置不同的行为。
+ * 最后的存根(例如:thenReturn("foo"))决定进一步连续调用的行为。</p>
  * when(mock.someMethod("some arg"))
  *  .thenThrow(new RuntimeException())
  *  .thenReturn("foo");
@@ -34,6 +36,10 @@ import org.mockito.NotExtensible;
  */
 @NotExtensible
 public interface OngoingStubbing<T> {
+    /**
+     *
+     *
+     */
 
     /**
      * Sets a return value to be returned when the method is called. E.g:
@@ -181,6 +187,22 @@ public interface OngoingStubbing<T> {
      * See examples in javadoc for {@link Mockito#when}
      *
      * @return object that allows stubbing consecutive calls
+     *
+     * <p>
+     *     设置在模拟对象上调用方法时要调用的实际实现。
+     * 与往常一样，您将阅读部分模拟警告:面向对象编程通过将复杂性划分为单独的、特定的SRPy对象，更少地处理复杂性。部分模拟如何适合这个范例?嗯，它就是不……部分模拟通常意味着复杂性已经转移到同一对象上的不同方法。在大多数情况下，这不是您想要设计应用程序的方式。
+     * 然而，在极少数情况下，部分模拟可以派上用场:处理您不能轻易更改的代码(第三方接口、遗留代码的临时重构等)。然而，我不会将部分模拟用于新的、测试驱动的、设计良好的代码。
+     * // someemethod()必须是安全的(例如不抛出，不依赖于对象状态等)
+     * //如果它是不安全的，那么你将有麻烦使用这个api存根它。使用Mockito.doCallRealMethod()。
+     * 当(mock.someMethod ()) .thenCallRealMethod ();
+     *
+     * //调用real方法:
+     * mock.someMethod ();
+     *
+     *
+     * 另请参阅javadoc Mockito.spy(对象)以了解有关部分模拟的更多信息。spy()是创建部分模拟的推荐方法。原因是它保证针对正确构造的对象调用真实的方法，因为您负责构造传递给spy()方法的对象。
+     * 参见javadoc中的Mockito.when示例
+     * </p>
      */
     OngoingStubbing<T> thenCallRealMethod();
 
