@@ -1778,6 +1778,32 @@ public class Mockito extends ArgumentMatchers {
      * This feature will not work when any return type of methods included in the chain cannot be mocked
      * (for example: is a primitive or a final class). This is because of java type system.
      * </p>
+     *
+     * 场景：
+     * HelloService的getByName 返回一个Student。 我们针对HelloService 进行mock，并when getByName thenReturn(  StudentA)
+     *
+     * 其中StudentA 是我们手动new 的一个对象。然后 我们 就可以这样执行
+     * when(helooService.getByName()).thenReturn(StudentA)
+     *  helloService.getByName().getName();
+     *
+     *
+     * 但是 如果我们 想 对 getByName的返回值进行mock， 也就是 Student studnetB=mock(Student.class)
+     * 然后这个StudnetB 作为 getByNmae 方法的 thenReturn的参数。
+     *  when(helooService.getByName()).thenReturn(StudentB)
+     *  helloService.getByName().getName();
+     *
+     * 那么我们 调用 helloService.getByName 就会返回一个mock的StudentB。 缺点是 需要手动 mock Student 或者需要手动 new Student 并设置 thenReturn。
+     *
+     *
+     * RETURNS_DEEP_STUBS 配置就是 对被mock的Service的返回值也会自动创建Mock 并返回.
+     *
+     * 就是说 : mock(HelloService.class)得到的helloService 如果直接调用 getByname（没有设置when thenReturn）那么
+     * getByName就会返回Null，因此  helloService.getByName().getName()就会报空指针。
+     * 而如果 mock(HelloService.class ,return_deep_stubs)那么 helloService.getByName() 就会返回一个mock Student，
+     * 这个时候就 可以执行 helloService.getByName().getName()  ，因为没有针对mock Student配置 getName返回什么值，因此
+     *  helloService.getByName().getName()返回null
+     *
+     *
      */
     public static final Answer<Object> RETURNS_DEEP_STUBS = Answers.RETURNS_DEEP_STUBS;
 

@@ -110,8 +110,13 @@ import org.mockito.internal.util.Primitives;
  * @see AdditionalMatchers
  */
 @CheckReturnValue
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public class ArgumentMatchers {
+
+
+
+
+
 
     /**
      * Matches <strong>anything</strong>, including nulls and varargs.
@@ -626,6 +631,7 @@ public class ArgumentMatchers {
      * <p>
      * See examples in javadoc for {@link ArgumentMatchers} class
      * </p>
+     * 在最后的验证时如果只输入字符串”hello”是会报错的，必须使用Matchers类内建的eq方法。如果将anyInt()换成1进行验证也需要用eq(1)。
      *
      * @param value the given value.
      * @return <code>null</code>.

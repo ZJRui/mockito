@@ -1,8 +1,10 @@
 package sachin.mockito.demo;
 
+import javafx.beans.binding.When;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -48,10 +50,24 @@ public class MockitoTest {
 
     }
 
+    @Test
+    public void testC() {
+        ExampleService mock = Mockito.mock(ExampleService.class);
+        Mockito.when(mock.add(Mockito.anyInt(), Mockito.anyInt())).thenReturn(2);
+
+        Mockito.when(mock.hello(Mockito.anyString())).thenReturn("abc");
+        int add = mock.add(1, 4);
+        System.out.println(add);
+    }
+
     class ExampleService {
 
         int add(int a, int b) {
             return a+b;
+        }
+
+        String hello(String name) {
+            return name;
         }
         void run(){
 

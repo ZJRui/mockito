@@ -202,6 +202,26 @@ public interface OngoingStubbing<T> {
      *
      * 另请参阅javadoc Mockito.spy(对象)以了解有关部分模拟的更多信息。spy()是创建部分模拟的推荐方法。原因是它保证针对正确构造的对象调用真实的方法，因为您负责构造传递给spy()方法的对象。
      * 参见javadoc中的Mockito.when示例
+     *
+     * </p>
+     *
+     *
+     * <p>
+     *     默认情况下 mock出来的service是代理类的对象，我们调用mockService的方法，不会真正执行被mock的Class 中定义的方法。
+     *     如果想让mock对象执行实际的mock Class中的方法可以使用如下方式
+     *     when(foo.blah(anyString(), anyString())).thenCallRealMethod();
+     *     when方法内的部分 必须是有返回值的 service方法的调用 。针对没有返回值的service的方法，可以使用如下方式：
+     *     doCallRealMethod().when(instance).voidFunction();
+     *
+     *     ----------
+     *
+     * 该when语法不会与一个void方法的工作(它不会显示在适合when),并且doReturn当没有返回值不适用.doCallRealMethod很可能是你想要的答案.
+     *
+     * doCallRealMethod().when(instance).voidFunction();
+     * 请记住,在模拟上调用实际方法时,您可能无法获得非常逼真的行为,因为与间谍不同,模拟对象将跳过所有构造函数和初始化程序调用,包括设置字
+     * 段的调用.这意味着,如果您的方法根本使用任何实例状态,则它不太可能作为带有doCallRealMethod或的模拟thenCallRealMethod.
+     * 使用间谍,您可以创建类的实际实例,然后该Mockito.spy方法将复制该实例状态以实现更真实的交互.
+     *
      * </p>
      */
     OngoingStubbing<T> thenCallRealMethod();

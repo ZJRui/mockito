@@ -57,6 +57,26 @@ public enum Answers implements Answer<Object> {
      *
      * <p>Please see the {@link org.mockito.Mockito#RETURNS_DEEP_STUBS} documentation for more details.</p>
      *
+     * 场景：
+     * HelloService的getByName 返回一个Student。 我们针对HelloService 进行mock，并when getByName thenReturn(  StudentA)
+     *
+     * 其中StudentA 是我们手动new 的一个对象。然后 我们 就可以这样执行
+     * when(helooService.getByName()).thenReturn(StudentA)
+     *  helloService.getByName().getName();
+     *
+     *
+     * 但是 如果我们 想 对 getByName的返回值进行mock， 也就是 Student studnetB=mock(Student.class)
+     * 然后这个StudnetB 作为 getByNmae 方法的 thenReturn的参数。
+     *  when(helooService.getByName()).thenReturn(StudentB)
+     *  helloService.getByName().getName();
+     *
+     * 那么我们 调用 helloService.getByName 就会返回一个mock的StudentB。 缺点是 需要手动 mock Student 或者需要手动 new Student 并设置 thenReturn。
+     *
+     *
+     * RETURNS_DEEP_STUBS 配置就是 对被mock的Service的返回值也会自动创建Mock 并返回
+     *
+     *
+     *
      * @see org.mockito.Mockito#RETURNS_DEEP_STUBS
      */
     RETURNS_DEEP_STUBS(new ReturnsDeepStubs()),
